@@ -1,118 +1,77 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
-  View,
+  Platform,
+  PlatformColor,
+  Appearance,
 } from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+import RNAzureCommunicationUICalling from './native/RNAzureCommunicationUICalling';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+const Stack = createNativeStackNavigator();
+const ACS_TOKEN =
+  'eyJhbGciOiJSUzI1NiIsImtpZCI6IjU3Qjg2NEUwQjM0QUQ0RDQyRTM3OTRBRTAyNTAwRDVBNTE5MjA1RjUiLCJ4NXQiOiJWN2hrNExOSzFOUXVONVN1QWxBTldsR1NCZlUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjAzYTJjODE3LTg1MmQtNGFhMC04NDA1LTM4ZjVkODdmY2NhYV8wMDAwMDAyNC01YWY4LTBkMmEtYjViYi1hNDNhMGQwMDIzOGYiLCJzY3AiOjE3OTIsImNzaSI6IjE3Mzg0MzQ1MTEiLCJleHAiOjE3Mzg1MjA5MTEsInJnbiI6ImFtZXIiLCJhY3NTY29wZSI6InZvaXAiLCJyZXNvdXJjZUlkIjoiMDNhMmM4MTctODUyZC00YWEwLTg0MDUtMzhmNWQ4N2ZjY2FhIiwicmVzb3VyY2VMb2NhdGlvbiI6InVuaXRlZHN0YXRlcyIsImlhdCI6MTczODQzNDUxMX0.bUZQ209HU5R_5IfdlYZoFHN-FHygcFMpqmnl-Ca1kWZIcdvSI6Zw43eV0guz-ulcwwCLA_X1g_QXc8BY1l441Y0bJPOFQSyhjAb3m6FCuBwrFUJYaMe-PuS1jghellVwA-rm1Lzap3hH3yJIR7uwElv3QTrEh2uHvES89aj3Zfxf8dehqcENYAh_r_7KLgur9vDc_5zlGw1G_U-k-eSVh7UA10gV9cN_stdJiXXtEVFka_a6JvUwQXOTGxvKJqYjWRimHKJxFRe4lWPXqFFHb5Q8E0RINYfqY2K22sSX_cuBnZEwhwk-BvBXecklmpcrQYGRjUr8aZsJ1KE7anKHkQ';
+const ROOM_ID = '99454394513162041';
+const DISPLAY_NAME = 'Abhishek Mandingi';
+const App = () => {
+  function HomeScreen() {
+    const resolveAssetSource = require('react-native/Libraries/Image/resolveAssetSource');
+    useEffect(() => {
+      const startCallComposite = async () => {
+        try {
+          const localAvatarImageResource = resolveAssetSource(''); // Default avatar
+          const remoteAvatarImageResource = resolveAssetSource(''); // Default avatar
+          await RNAzureCommunicationUICalling.startCallComposite(
+            // local options
+            {
+              displayName: DISPLAY_NAME,
+              title: '',
+              subtitle: '',
+              disableLeaveCallConfirmation: false,
+            },
+            localAvatarImageResource,
+            // remote options
+            {
+              token: ACS_TOKEN,
+              meeting: ROOM_ID,
+            },
+            remoteAvatarImageResource,
+            // localization options
+            {locale: 'en', layout: false},
+            {setupOrientation: 'PORTRAIT', callOrientation: 'PORTRAIT'},
+          );
+        } catch (e: any) {
+          Alert.alert('Error', e.message, [{text: 'Dismiss'}]);
+        }
+      };
+      startCallComposite();
+    }, []);
+    return (
+      <SafeAreaView style={{flex: 1, backgroundColor: '#F8F8F8'}}>
+        <ScrollView contentInsetAdjustmentBehavior="automatic">
+          <Text style={styles.title}>Initializing call...</Text>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Join" component={HomeScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
+};
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  title: {
+    textAlign: 'center',
+    padding: 10,
+    marginTop: 10,
+    fontSize: 17,
   },
 });
-
 export default App;
