@@ -16,6 +16,7 @@ const Stack = createNativeStackNavigator();
 const ACS_TOKEN ='';
 const ROOM_ID = '';
 const DISPLAY_NAME = '';
+
 const App = () => {
   function HomeScreen() {
     const resolveAssetSource = require('react-native/Libraries/Image/resolveAssetSource');
