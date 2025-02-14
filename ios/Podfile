@@ -16,6 +16,11 @@ end
 
 target 'videoCallApp' do
   use_frameworks!
+  # Firebase configuration
+  pod 'Firebase/Core'
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
   pod 'AzureCommunicationUICalling', '1.13.0'
   config = use_native_modules!
 
